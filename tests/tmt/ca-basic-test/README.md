@@ -55,4 +55,23 @@ tmt --feeling-safe run -vvv \
   plans --name '^/tests/tmt/plans/ca-basic-test$'
 ```
 
+### Build a good local image (recommended)
+
+Some Quay tags have `ENTRYPOINT=sleep` (broken for systemd). Build locally with
+`ENTRYPOINT=/usr/sbin/init`:
+
+```bash
+cd ~/Projects/pki-cli
+# unset SKIP_IPA_BUILD — do a real package build
+tests/tmt/bin/build-ipa-runner.sh
+docker image inspect freeipa-ipacta:latest \
+  --format 'Entrypoint={{json .Config.Entrypoint}}'
+# expect: Entrypoint=["/usr/sbin/init"]
+```
+
+Then run with `SKIP_IPA_BUILD=1` (uses local `freeipa-ipacta:latest`).
+
+The test forces `--entrypoint /usr/sbin/init` and **fails** if the container
+dies or systemd never becomes ready (no silent 3‑minute soft-pass).
+
 Expect non-zero overall while client REST and Dogtag layout gaps remain — that is OK for this PR.

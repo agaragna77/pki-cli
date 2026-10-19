@@ -99,6 +99,12 @@ docker build --network host \
     "$CTX"
 
 docker image inspect freeipa-ipacta:latest >/dev/null
+EP=$(docker image inspect freeipa-ipacta:latest --format '{{json .Config.Entrypoint}}')
+echo "Entrypoint=${EP}"
+if [[ "$EP" != '["/usr/sbin/init"]' ]]; then
+    echo "ERROR: freeipa-ipacta Entrypoint must be [\"/usr/sbin/init\"] (got ${EP})" >&2
+    exit 1
+fi
 echo "==== freeipa-ipacta ready (Fedora 46 + packaged IPACTA) ===="
 docker images freeipa-ipacta
 docker run --rm --entrypoint rpm freeipa-ipacta:latest \

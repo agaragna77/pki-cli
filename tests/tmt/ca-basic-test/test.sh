@@ -144,7 +144,9 @@ if ! docker image inspect "$IMAGE" >/dev/null 2>&1; then
     IMAGE=freeipa-ipacta:latest
 fi
 docker rm -f pki 2>/dev/null || true
+# Force init entrypoint: some Quay tags were baked with ENTRYPOINT=sleep.
 docker run -d --name pki \
+    --entrypoint /usr/sbin/init \
     --hostname="$HOST" \
     --network=example \
     --network-alias="$HOST" \
@@ -152,15 +154,30 @@ docker run -d --name pki \
     --network-alias=pki.example.com \
     --sysctl net.ipv6.conf.all.disable_ipv6=0 \
     --privileged \
-    "$IMAGE" \
-    /usr/sbin/init
+    "$IMAGE"
+ready=0
 for _i in $(seq 1 90); do
+    if ! docker inspect -f '{{.State.Running}}' pki 2>/dev/null | grep -q true; then
+        echo "ERROR: container pki is not running (image entrypoint/init failure?)" >&2
+        docker inspect pki --format \
+            'Status={{.State.Status}} ExitCode={{.State.ExitCode}} Error={{.State.Error}} Entrypoint={{json .Config.Entrypoint}} Cmd={{json .Config.Cmd}}' \
+            2>/dev/null || true
+        docker logs pki 2>&1 | tail -n 80 || true
+        exit 1
+    fi
     if docker exec pki systemctl is-system-running --wait 2>/dev/null \
         || docker exec pki systemctl is-system-running 2>/dev/null | grep -Eq 'running|degraded'; then
+        ready=1
         break
     fi
     sleep 2
 done
+if [[ "$ready" -ne 1 ]]; then
+    echo "ERROR: systemd did not become ready in container pki within timeout" >&2
+    docker exec pki systemctl is-system-running 2>&1 || true
+    docker logs pki 2>&1 | tail -n 80 || true
+    exit 1
+fi
 )
 _rc=$?
 set -euo pipefail
