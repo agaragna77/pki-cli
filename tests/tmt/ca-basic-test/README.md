@@ -28,9 +28,30 @@ tmt run --until discover plans --name '^/tests/tmt/plans/ca-basic-test$'
 
 ## Full run
 
+Prefer a local image if you already have one (this machine often has `freeipa-ipacta:latest`):
+
+```bash
+docker image inspect freeipa-ipacta:latest >/dev/null
+tmt --feeling-safe run -vvv -e SKIP_IPA_BUILD=1 \
+  plans --name '^/tests/tmt/plans/ca-basic-test$'
+```
+
+Or pull a real Quay tag (not a placeholder). Current example on
+`quay.io/agaragna77/freeipa-ipacta`:
+
+```bash
+IPA_IMAGE=quay.io/agaragna77/freeipa-ipacta:idm-8254-tmt-ca-basic-1bc6b548f
+tmt --feeling-safe run -vvv \
+  -e "SKIP_IPA_BUILD=1 IPA_IMAGE=${IPA_IMAGE}" \
+  plans --name '^/tests/tmt/plans/ca-basic-test$'
+```
+
+List tags: `skopeo list-tags docker://quay.io/agaragna77/freeipa-ipacta`
+
+Or let prepare **build** from Fedora packages (slow; no prebuilt image needed):
+
 ```bash
 tmt --feeling-safe run -vvv \
-  -e 'SKIP_IPA_BUILD=1 IPA_IMAGE=quay.io/agaragna77/freeipa-ipacta:TAG' \
   plans --name '^/tests/tmt/plans/ca-basic-test$'
 ```
 
