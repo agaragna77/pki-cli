@@ -1,0 +1,17 @@
+summary: IPACTA KRA basic + host pki-cli
+description: |
+  IPACTA port of Dogtag TMT kra-basic-test (from freeipa generated test) plus
+  host-side pki-cli smoke. Host `pki-cli info` is expected to exit 2
+  (java-bound) until pure-Python REST is implemented.
+test: ./test.sh
+framework: shell
+require: []
+duration: 90m
+tag:
+    - kra
+    - ipacta
+    - pki-cli
+    - idm-8254
+link:
+    - verifies: https://redhat.atlassian.net/browse/IDM-8254
+    - relates: https://github.com/agaragna77/pki-cli

@@ -34,7 +34,7 @@ Binary name is `pki-cli`; the import package remains `pki` (Dogtag-compatible).
 
 ## TMT (manual)
 
-Ported plan: `tests/tmt/plans/ca-basic-test` (IPACTA + host `pki-cli`).
+Ported plans: `tests/tmt/plans/ca-basic-test`, `tests/tmt/plans/kra-basic-test` (IPACTA + host `pki-cli`).
 
 Laptop (no Docker/Quay):
 

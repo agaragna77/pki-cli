@@ -1,0 +1,70 @@
+summary: Basic KRA — IPACTA + host pki-cli
+description: |
+  Port of FreeIPA IPACTA kra-basic-test into agaragna77/pki-cli for manual TMT.
+  Server under test: freeipa-ipacta (Quay or build-ipa-runner.sh).
+  Host client: editable pki-cli from this repo (not Dogtag Java tools).
+
+  Full execute may fail when host pki-cli hits the Java MainCLI gate (exit 2,
+  java-bound) — that is expected until pure-Python REST lands.
+  Generated Dogtag-layout probes may still collect FAILS (same as freeipa port).
+
+  See tests/tmt/kra-basic-test/README.md
+discover:
+    how: fmf
+    test:
+        - /tests/tmt/kra-basic-test
+provision:
+    how: local
+prepare:
+    - name: require-docker
+      how: shell
+      script:
+        - |
+          set -euo pipefail
+          if ! command -v docker >/dev/null 2>&1; then
+            echo "==== Installing Docker (moby-engine) ===="
+            dnf install -y moby-engine containerd
+          fi
+          systemctl enable docker 2>/dev/null || true
+          systemctl start docker 2>/dev/null || true
+          docker info >/dev/null
+          echo "==== Docker ready ===="
+    - name: build-ipa-runner
+      how: shell
+      script:
+        - |
+          "${TMT_TREE}/tests/tmt/bin/build-ipa-runner.sh" "${TMT_TREE}"
+    - name: install-host-pki-cli
+      how: shell
+      script:
+        - |
+          set -euo pipefail
+          cd "${TMT_TREE}"
+          python3 -m venv "${TMT_TREE}/.venv"
+          # shellcheck disable=SC1091
+          source "${TMT_TREE}/.venv/bin/activate"
+          pip install -U pip
+          pip install -e "${TMT_TREE}"
+          command -v pki-cli
+          pki-cli --help >/dev/null
+          mkdir -p "${TMT_TREE}/tests/tmt/.run"
+          echo "${TMT_TREE}/.venv/bin" > "${TMT_TREE}/tests/tmt/.run/venv-bin"
+          echo "==== host pki-cli ready ===="
+execute:
+    how: tmt
+finish:
+    how: shell
+    script:
+      - |
+        docker rm -f ipa client 2>/dev/null || true
+        docker network rm example 2>/dev/null || true
+tag:
+    - kra
+    - ipacta
+    - pki-cli
+    - idm-8254
+    - tier1
+link:
+    - verifies: https://redhat.atlassian.net/browse/IDM-8254
+    - relates: https://github.com/agaragna77/pki-cli
+    - relates: https://github.com/dogtagpki/pki/blob/master/.github/workflows/kra-basic-test.yml
