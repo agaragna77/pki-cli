@@ -16,6 +16,7 @@ dependencies = [
   "requests",
   "cryptography",
   "python-ldap",
+  "PyYAML",
 ]
 
 [project.scripts]
