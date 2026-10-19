@@ -34,7 +34,7 @@ Binary name is `pki-cli`; the import package remains `pki` (Dogtag-compatible).
 
 ## TMT (manual)
 
-Dogtag-rooted plan: `tests/tmt/plans/ca-basic-test` (IPACTA backend + host `pki-cli`).
+Dogtag-rooted plans: `tests/tmt/plans/ca-basic-test`, `tests/tmt/plans/kra-basic-test` (IPACTA + host `pki-cli`).
 
 ```bash
 tmt plans show '^/tests/tmt/plans/ca-basic-test$'

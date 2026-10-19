@@ -1,0 +1,19 @@
+summary: Dogtag kra-basic on IPACTA + pki-cli
+description: |
+  Dogtag TMT/GHA kra-basic-test step harness against freeipa-ipacta.
+  Host pki-cli replaces docker exec pki pki. Install CA/KRA =
+  ipa-server-install / ipa-kra-install. Java-gated client and Dogtag
+  layout gaps fail-collect.
+test: ./test.sh
+framework: shell
+require: []
+duration: 180m
+tag:
+    - kra
+    - dogtag
+    - ipacta
+    - pki-cli
+    - idm-8254
+link:
+    - verifies: https://redhat.atlassian.net/browse/IDM-8254
+    - relates: https://github.com/agaragna77/pki-cli
