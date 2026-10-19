@@ -51,3 +51,14 @@ python scripts/catalogue_propose.py --command 'pki-cli info' --status java-bound
 
 Humans must classify `rest-defect` vs `api-gap` (`--confirm-classification` to finalize).
 Generated Markdown: `catalogue/RESULTS.md` (do not hand-edit).
+
+### Java MainCLI gate
+
+Remote commands that still went through Dogtag Java `MainCLI` are refused with exit status 2.
+Record them as `java-bound`:
+
+```bash
+pki-cli info   # expected: ERROR … Java MainCLI path is disabled; exit 2
+python scripts/catalogue_propose.py --command 'pki-cli info' --status java-bound --notes 'gated'
+python scripts/catalogue_regen.py
+```
