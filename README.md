@@ -32,6 +32,18 @@ pki-cli --help
 
 Binary name is `pki-cli`; the import package remains `pki` (Dogtag-compatible).
 
+## TMT (manual)
+
+Dogtag-rooted plan: `tests/tmt/plans/ca-basic-test` (IPACTA backend + host `pki-cli`).
+
+```bash
+tmt plans show '^/tests/tmt/plans/ca-basic-test$'
+tmt lint '^/tests/tmt/plans/ca-basic-test$'
+tmt run --until discover plans --name '^/tests/tmt/plans/ca-basic-test$'
+```
+
+See `tests/tmt/ca-basic-test/README.md`. No GHA in this repo yet.
+
 ## Status
 
 Scaffold: editable install and `pki-cli --help`. Catalogue skeleton is in-tree; Java gate, TMT plans, and REST land in follow-up PRs.
