@@ -1,0 +1,10 @@
+# Source of truth for pki-cli result catalogue.
+# Allowed status values: pass | rest-defect | api-gap | java-bound
+# Humans classify rest-defect vs api-gap; the propose helper must not invent that.
+version: 1
+entries:
+  - id: smoke-help
+    command: pki-cli --help
+    status: pass
+    notes: Scaffold smoke; --help exits 0.
+    classification_todo: false

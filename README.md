@@ -34,4 +34,20 @@ Binary name is `pki-cli`; the import package remains `pki` (Dogtag-compatible).
 
 ## Status
 
-Scaffold: editable install and `pki-cli --help`. Pure-Python REST path, TMT plans, and catalogue land in follow-up PRs.
+Scaffold: editable install and `pki-cli --help`. Catalogue skeleton is in-tree; Java gate, TMT plans, and REST land in follow-up PRs.
+
+## Result catalogue
+
+YAML source of truth: `catalogue/results.yaml`.
+
+Allowed statuses: `pass` | `rest-defect` | `api-gap` | `java-bound`.
+
+```bash
+source .venv/bin/activate
+pip install -e .   # provides PyYAML for scripts
+python scripts/catalogue_regen.py
+python scripts/catalogue_propose.py --command 'pki-cli info' --status java-bound --notes 'gated' --dry-run
+```
+
+Humans must classify `rest-defect` vs `api-gap` (`--confirm-classification` to finalize).
+Generated Markdown: `catalogue/RESULTS.md` (do not hand-edit).
