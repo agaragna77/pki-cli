@@ -46,6 +46,10 @@ See `tests/tmt/ca-basic-test/README.md`. No GHA in this repo yet.
 
 ## Status
 
+Thin IPACTA+DS (no FreeIPA): **blocked** for M1 — see
+[docs/spike-thin-ipacta-ds.md](docs/spike-thin-ipacta-ds.md).
+TMT continues on `freeipa-ipacta` + `ipa-server-install`.
+
 Scaffold: editable install and `pki-cli --help`. Catalogue skeleton is in-tree; Java gate, TMT plans, and REST land in follow-up PRs.
 
 ## Result catalogue
