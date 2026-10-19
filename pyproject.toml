@@ -1,0 +1,25 @@
+[build-system]
+requires = ["setuptools>=61"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "pki-cli"
+version = "0.1.0"
+description = "Dogtag-shaped Python PKI CLI (REST client; IPACTA target)"
+readme = "README.md"
+license = { text = "GPL-2.0-only" }
+requires-python = ">=3.9"
+authors = [
+  { name = "Alessandro Garagnani", email = "agaragna@redhat.com" },
+]
+dependencies = [
+  "requests",
+  "cryptography",
+  "python-ldap",
+]
+
+[project.scripts]
+pki-cli = "pki.cli.pki_cli_entry:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
