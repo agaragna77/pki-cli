@@ -1,0 +1,20 @@
+summary: IPACTA CA basic + host pki-cli
+description: |
+  FreeIPA-only IPACTA install (from freeipa tests/tmt/ca-basic-test) plus
+  host-side pki-cli smoke. Container still verifies packaged IPACTA drop-ins
+  (`/usr/bin/pki` shim). Host uses venv `pki-cli` from this repo.
+
+  Host `pki-cli info` is expected to exit 2 (Java MainCLI gated / java-bound)
+  until pure-Python REST is implemented.
+test: ./test.sh
+framework: shell
+require: []
+duration: 180m
+tag:
+    - ca
+    - ipacta
+    - pki-cli
+    - idm-8254
+link:
+    - verifies: https://redhat.atlassian.net/browse/IDM-8254
+    - relates: https://github.com/agaragna77/pki-cli
