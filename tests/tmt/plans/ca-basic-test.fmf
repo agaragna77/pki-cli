@@ -1,0 +1,67 @@
+summary: Dogtag ca-basic vs IPACTA + host pki-cli
+description: |
+  Dogtag tests/tmt/ca-basic-test (GHA ca-basic-test.yml) as source of truth.
+  Server under test: freeipa-ipacta (IPACTA). Host client: pki-cli.
+  DS/pkispawn remapped; pki-server/layout steps fail-collect (java-bound/api-gap).
+
+  See tests/tmt/ca-basic-test/README.md
+discover:
+    how: fmf
+    test:
+        - /tests/tmt/ca-basic-test
+provision:
+    how: local
+prepare:
+    - name: require-docker
+      how: shell
+      script:
+        - |
+          set -euo pipefail
+          if ! command -v docker >/dev/null 2>&1; then
+            echo "==== Installing Docker (moby-engine) ===="
+            dnf install -y moby-engine containerd
+          fi
+          systemctl enable docker 2>/dev/null || true
+          systemctl start docker 2>/dev/null || true
+          docker info >/dev/null
+          echo "==== Docker ready ===="
+    - name: build-ipa-runner
+      how: shell
+      script:
+        - |
+          "${TMT_TREE}/tests/tmt/bin/build-ipa-runner.sh" "${TMT_TREE}"
+    - name: install-host-pki-cli
+      how: shell
+      script:
+        - |
+          set -euo pipefail
+          cd "${TMT_TREE}"
+          python3 -m venv "${TMT_TREE}/.venv"
+          # shellcheck disable=SC1091
+          source "${TMT_TREE}/.venv/bin/activate"
+          pip install -U pip
+          pip install -e "${TMT_TREE}"
+          command -v pki-cli
+          pki-cli --help >/dev/null
+          mkdir -p "${TMT_TREE}/tests/tmt/.run"
+          echo "${TMT_TREE}/.venv/bin" > "${TMT_TREE}/tests/tmt/.run/venv-bin"
+          echo "==== host pki-cli ready ===="
+execute:
+    how: tmt
+finish:
+    how: shell
+    script:
+      - |
+        docker rm -f pki ds 2>/dev/null || true
+        docker volume rm ds-data 2>/dev/null || true
+        docker network rm example 2>/dev/null || true
+tag:
+    - ca
+    - dogtag
+    - ipacta
+    - pki-cli
+    - idm-8254
+link:
+    - verifies: https://redhat.atlassian.net/browse/IDM-8254
+    - relates: https://github.com/agaragna77/pki-cli
+    - relates: https://github.com/dogtagpki/pki/blob/master/.github/workflows/ca-basic-test.yml
