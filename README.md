@@ -32,6 +32,21 @@ pki-cli --help
 
 Binary name is `pki-cli`; the import package remains `pki` (Dogtag-compatible).
 
+## TMT (manual)
+
+Ported plan: `tests/tmt/plans/ca-basic-test` (IPACTA + host `pki-cli`).
+
+Laptop (no Docker/Quay):
+
+```bash
+tmt plans show '^/tests/tmt/plans/ca-basic-test$'
+tmt lint '^/tests/tmt/plans/ca-basic-test$'
+tmt run --until discover plans --name '^/tests/tmt/plans/ca-basic-test$'
+```
+
+Full run: see `tests/tmt/ca-basic-test/README.md` (`SKIP_IPA_BUILD`, `IPA_IMAGE`, `--feeling-safe`).
+No GitHub Actions in this repo for now.
+
 ## Status
 
 Scaffold: editable install and `pki-cli --help`. Catalogue skeleton is in-tree; Java gate, TMT plans, and REST land in follow-up PRs.
