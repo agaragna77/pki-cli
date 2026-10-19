@@ -225,6 +225,25 @@ class PKICLI(pki.cli.CLI):
             )
         return dbtype
 
+    def refuse_java(self, args):
+        """Fail clearly instead of launching Dogtag Java MainCLI."""
+        command = args[0] if args else '(none)'
+        remainder = ' '.join(args) if args else ''
+        print(
+            "ERROR: command %r is not available via pure-Python REST yet "
+            "(Dogtag Java MainCLI path is disabled in pki-cli)."
+            % (command,),
+            file=sys.stderr,
+        )
+        print(
+            "Catalogue hint: status=java-bound. Propose with:\n"
+            "  python scripts/catalogue_propose.py "
+            "--command 'pki-cli %s' --status java-bound"
+            % (remainder or command,),
+            file=sys.stderr,
+        )
+        sys.exit(2)
+
     def execute_java(self, args, stdout=sys.stdout):
 
         self.set_nss_default_db_type()
@@ -404,7 +423,9 @@ class PKICLI(pki.cli.CLI):
             command = args.remainder[0]
         logger.debug('CLI Command: %s', command)
 
-        self.execute_java(args.remainder)
+        # pki-cli: Dogtag Java MainCLI path is disabled until a pure-Python
+        # REST implementation exists for the command.
+        self.refuse_java(args.remainder)
 
 
 if __name__ == '__main__':
